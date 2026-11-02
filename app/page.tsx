@@ -244,7 +244,7 @@ export default function Dashboard() {
       <form onSubmit={authMode === 'login' ? login : register} className="w-full max-w-md rounded-3xl bg-white p-7 shadow-2xl">
         <p className="text-xl font-black text-slate-950">Visa<span className="text-amber-400">BD</span></p>
         <h1 className="mt-7 text-2xl font-black text-slate-950">{authMode === 'login' ? 'Admin sign in' : 'Create admin account'}</h1>
-        <p className="mt-2 text-sm text-slate-500">{authMode === 'login' ? 'Use your VisaBD administrator account.' : 'Create the first administrator account. Additional accounts require approval.'}</p>
+        <p className="mt-2 text-sm text-slate-500">{authMode === 'login' ? 'Use your VisaBD administrator account.' : 'Create an administrator account.'}</p>
         {authError && <div role="alert" className="mt-5 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{authError}</div>}
         {authSuccess && <div role="status" className="mt-5 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">{authSuccess}</div>}
         {authMode === 'register' && <label className="mt-6 block text-sm font-bold text-slate-700">Full name

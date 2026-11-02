@@ -13,14 +13,6 @@ export async function POST(request: NextRequest) {
     }
 
     const admin = createAdminClient();
-    const { data: existingAdmin } = await admin
-      .from('admin_users')
-      .select('user_id')
-      .limit(1);
-
-    if (existingAdmin?.length) {
-      return NextResponse.json({ error: 'An administrator already exists. Ask an existing administrator to approve additional accounts.' }, { status: 403 });
-    }
 
     const { data, error } = await admin.auth.admin.createUser({
       email,
@@ -35,7 +27,7 @@ export async function POST(request: NextRequest) {
 
     const { error: adminUserError } = await admin
       .from('admin_users')
-      .insert({
+      .upsert({
         user_id: data.user.id,
         email,
         full_name: fullName,

@@ -22,21 +22,6 @@ export async function POST(request: Request) {
   const restHeaders = adminHeaders();
   const authHeaders = adminHeaders();
 
-  const adminResponse = await fetch(supabaseUrl + '/rest/v1/admin_users?select=user_id&limit=1', {
-    headers: restHeaders,
-    cache: 'no-store',
-  });
-  if (!adminResponse.ok) {
-    return NextResponse.json(
-      { error: await supabaseErrorMessage(adminResponse, 'Unable to inspect administrator accounts.') },
-      { status: 500 },
-    );
-  }
-  const admins = await adminResponse.json() as unknown[];
-  if (admins.length) {
-    return NextResponse.json({ error: 'An administrator already exists. Ask an existing administrator to approve additional accounts.' }, { status: 403 });
-  }
-
   let userId = '';
   let linkedExistingAuthUser = false;
 
@@ -52,7 +37,26 @@ export async function POST(request: Request) {
     linkedExistingAuthUser = Boolean(userId);
   }
 
-  if (!userId) {
+  if (userId) {
+    // If user already exists in Supabase Auth, update their password and confirm email
+    const updateResponse = await fetch(supabaseUrl + `/auth/v1/admin/users/${userId}`, {
+      method: 'PUT',
+      headers: authHeaders,
+      body: JSON.stringify({
+        password,
+        email_confirm: true,
+        user_metadata: { full_name: fullName, role: 'admin' },
+      }),
+    });
+    if (!updateResponse.ok) {
+      const errResult = await updateResponse.json() as { message?: string; msg?: string };
+      return NextResponse.json(
+        { error: errResult.message || errResult.msg || 'Unable to update credentials for this account.' },
+        { status: updateResponse.status },
+      );
+    }
+  } else {
+    // Otherwise create a new user with confirmed email
     const createResponse = await fetch(supabaseUrl + '/auth/v1/admin/users', {
       method: 'POST',
       headers: authHeaders,
@@ -60,7 +64,7 @@ export async function POST(request: Request) {
         email,
         password,
         email_confirm: true,
-        user_metadata: { full_name: fullName },
+        user_metadata: { full_name: fullName, role: 'admin' },
       }),
     });
     const result = await createResponse.json() as { id?: string; message?: string; msg?: string };
@@ -77,7 +81,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Supabase returned an account without a user ID.' }, { status: 500 });
   }
 
-  const authorizationResponse = await fetch(supabaseUrl + '/rest/v1/admin_users', {
+  const authorizationResponse = await fetch(supabaseUrl + '/rest/v1/admin_users?on_conflict=user_id', {
     method: 'POST',
     headers: { ...restHeaders, Prefer: 'resolution=merge-duplicates,return=minimal' },
     body: JSON.stringify({ user_id: userId, email, full_name: fullName, role: 'admin', is_active: true }),
