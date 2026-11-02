@@ -71,7 +71,7 @@ export default function Dashboard() {
       const failed = [visa, blog, submission].find((result) =>
         result.status === 'rejected' && String(result.reason).includes('does not exist')
       );
-      if (failed) setMessage('Supabase is connected, but required VisaBD tables have not been created yet.');
+      if (failed) setMessage('Supabase is connected, but required WorkVisaBd tables have not been created yet.')
     }).finally(() => setLoading(false));
   }, [session?.access_token]);
 
@@ -242,9 +242,9 @@ export default function Dashboard() {
   if (!session) {
     return <main className="grid min-h-screen place-items-center bg-slate-950 p-4">
       <form onSubmit={authMode === 'login' ? login : register} className="w-full max-w-md rounded-3xl bg-white p-7 shadow-2xl">
-        <p className="text-xl font-black text-slate-950">Visa<span className="text-amber-400">BD</span></p>
+        <p className="text-xl font-black text-slate-950">WorkVisa<span className="text-amber-400">Bd</span></p>
         <h1 className="mt-7 text-2xl font-black text-slate-950">{authMode === 'login' ? 'Admin sign in' : 'Create admin account'}</h1>
-        <p className="mt-2 text-sm text-slate-500">{authMode === 'login' ? 'Use your VisaBD administrator account.' : 'Create an administrator account.'}</p>
+        <p className="mt-2 text-sm text-slate-500">{authMode === 'login' ? 'Use your WorkVisaBd administrator account.' : 'Create an administrator account.'}</p>
         {authError && <div role="alert" className="mt-5 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{authError}</div>}
         {authSuccess && <div role="status" className="mt-5 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">{authSuccess}</div>}
         {authMode === 'register' && <label className="mt-6 block text-sm font-bold text-slate-700">Full name
@@ -272,7 +272,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-slate-100 lg:flex">
       {menuOpen && <button aria-label="Close sidebar" onClick={() => setMenuOpen(false)} className="fixed inset-0 z-40 bg-slate-950/50 lg:hidden" />}
       <aside className={`${menuOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-slate-950 px-4 py-5 text-white transition-transform lg:static lg:translate-x-0`}>
-        <div className="px-3"><p className="text-xl font-black">Visa<span className="text-amber-400">BD</span></p><p className="mt-1 text-xs text-slate-400">Administration</p></div>
+        <div className="px-3"><p className="text-xl font-black">WorkVisa<span className="text-amber-400">Bd</span></p><p className="mt-1 text-xs text-slate-400">Administration</p></div>
         <nav className="mt-10 space-y-1">{navigation.map(({ name, icon: Icon }) =>
           <button key={name} onClick={() => { setSection(name); setMenuOpen(false); }} className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold ${section === name ? 'bg-blue-700 shadow-lg' : 'text-slate-300 hover:bg-white/10'}`}><Icon className="size-5" />{name}</button>
         )}</nav>
@@ -281,7 +281,7 @@ export default function Dashboard() {
       <div className="min-w-0 flex-1">
         <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-slate-200 bg-white px-4 sm:px-6 lg:px-8">
           <button aria-label="Open menu" onClick={() => setMenuOpen(true)} className="rounded-lg border p-2 lg:hidden"><Menu className="size-5" /></button>
-          <div><h1 className="text-lg font-bold text-slate-900">{section}</h1><p className="hidden text-xs text-slate-400 sm:block">Manage the VisaBD platform</p></div>
+          <div><h1 className="text-lg font-bold text-slate-900">{section}</h1><p className="hidden text-xs text-slate-400 sm:block">Manage the WorkVisaBd platform</p></div>
           <button aria-label="Notifications" className="relative ml-auto rounded-full border p-2 text-slate-500"><Bell className="size-5" /><span className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-red-500" /></button>
           <div className="relative">
             <button
@@ -438,7 +438,7 @@ function Manager({ title, formTitle, submitLabel, onSubmit, fields, items, rows,
 
 function SubmissionTable({ items, editable = false, onStatus, onSelect }: { items: Submission[]; editable?: boolean; onStatus?: (id: string | number, status: string) => void; onSelect?: (item: Submission) => void }) {
   if (!items.length) return <EmptyState>No applications found.</EmptyState>;
-  return <div className="overflow-x-auto"><table className="w-full min-w-[760px] text-left text-sm"><thead className="text-xs uppercase text-slate-400"><tr><th className="py-3">Tracking ID</th><th className="py-3">Applicant</th><th className="py-3">Country / Visa</th><th className="py-3">Status</th><th className="py-3 text-right">Details</th></tr></thead><tbody>{items.map((item) => <tr key={String(item.id)} className="border-t border-slate-100"><td className="py-4 font-mono text-xs font-bold">{item.tracking_id ?? item.id}</td><td className="py-4 font-bold">{item.customer_name ?? item.name ?? 'Unknown'}</td><td className="py-4 text-slate-500">{item.country ?? ''} {item.visa_title ?? item.visa ? `· ${item.visa_title ?? item.visa}` : ''}</td><td className="py-4">{editable ? <select value={item.status ?? 'Under Review'} onChange={(event) => onStatus?.(item.id, event.target.value)} className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold"><option>Under Review</option><option>Documents Required</option><option>Approved</option><option>Rejected</option></select> : <Status value={item.status} />}</td><td className="py-4 text-right">  <button type="button" onClick={() => onSelect?.(item)} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50"><Eye className="size-3.5" /> View</button></td></tr>)}</tbody></table></div>;
+  return <div className="overflow-x-auto"><table className="w-full min-w-190 text-left text-sm"><thead className="text-xs uppercase text-slate-400"><tr><th className="py-3">Tracking ID</th><th className="py-3">Applicant</th><th className="py-3">Country / Visa</th><th className="py-3">Status</th><th className="py-3 text-right">Details</th></tr></thead><tbody>{items.map((item) => <tr key={String(item.id)} className="border-t border-slate-100"><td className="py-4 font-mono text-xs font-bold">{item.tracking_id ?? item.id}</td><td className="py-4 font-bold">{item.customer_name ?? item.name ?? 'Unknown'}</td><td className="py-4 text-slate-500">{item.country ?? ''} {item.visa_title ?? item.visa ? `· ${item.visa_title ?? item.visa}` : ''}</td><td className="py-4">{editable ? <select value={item.status ?? 'Under Review'} onChange={(event) => onStatus?.(item.id, event.target.value)} className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold"><option>Under Review</option><option>Documents Required</option><option>Approved</option><option>Rejected</option></select> : <Status value={item.status} />}</td><td className="py-4 text-right">  <button type="button" onClick={() => onSelect?.(item)} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50"><Eye className="size-3.5" /> View</button></td></tr>)}</tbody></table></div>;
 }
 
 function SubmissionDetails({ submission, onClose }: { submission: Submission; onClose: () => void }) {
@@ -543,7 +543,7 @@ function VisaFields() {
     <Field name="countryCode" label="Country code" hint="Two letters, for example JP" /><Field name="flag" label="Flag emoji" hint="For example: 🇯🇵" /><label className="text-xs font-bold text-slate-500">Region<select name="region" required className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-3 text-sm"><option>Asia</option><option>Middle East</option><option>Europe</option><option>Africa</option><option>Americas</option></select><span className="mt-1.5 block font-normal text-slate-400">Choose the applicant destination region.</span></label>
     <Field name="title" label="Visa title" hint="Clear applicant-facing title, for example Skilled Worker Visa" /><Field name="categoryTag" label="Category tag" hint="Short category, for example Skilled Worker or Seasonal Work" /><Field name="processingTime" label="Processing time" hint="Estimated duration, for example 12-16 weeks" />
     <Field name="averageSalary" label="Average salary" hint="Typical annual income, for example EUR 38,000/year" /><Field name="validity" label="Validity" hint="How long the visa remains valid, for example 2 years" /><Field name="minEducation" label="Minimum education" hint="Example: Bachelor's degree or equivalent experience" />
-    <Field name="languageRequirement" label="Language requirement" hint="Example: IELTS 5.5 or equivalent" /><Field name="govtFee" label="Government fee" hint="Official government charge, for example 300" /><Field name="serviceFee" label="Service fee" hint="VisaBD service charge, for example 150" />
+    <Field name="languageRequirement" label="Language requirement" hint="Example: IELTS 5.5 or equivalent" /><Field name="govtFee" label="Government fee" hint="Official government charge, for example 300" /><Field name="serviceFee" label="Service fee" hint="WorkVisaBd service charge, for example 150" />
     <Field name="currency" label="Currency" hint="Currency code used for fees, for example EUR or GBP" />    <div className="lg:col-span-2"><Field name="image" label="Image URL" type="url" hint="Full https:// image address ending with .jpg, .png, or .webp" /></div>
     <div className="sm:col-span-2 lg:col-span-3"><TextArea name="overview" label="Overview" rows={4} hint="Briefly explain who this visa is for and what applicants can do with it." /></div>
     <TextArea name="keyBenefits" label="Key benefits (one per line)" rows={5} hint="Enter each benefit on a new line, for example Family sponsorship." /><TextArea name="eligibilityChecklist" label="Eligibility checklist (one per line)" rows={5} hint="Enter each requirement on a new line, for example Valid passport." /><TextArea name="requiredDocuments" label="Required documents (one per line)" rows={5} hint="Enter each document on a new line, for example Employment contract." />
